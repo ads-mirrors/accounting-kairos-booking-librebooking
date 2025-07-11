@@ -1397,23 +1397,8 @@ class BookableResource implements IBookableResource
      */
     public function ChangeAttributes($attributes)
     {
-        $diff = new ArrayDiff($this->_attributeValues, $attributes);
-
-        $added = $diff->GetAddedToArray1();
-        $removed = $diff->GetRemovedFromArray1();
-
-        /** @var $attribute AttributeValue */
-        foreach ($added as $attribute) {
-            $this->_addedAttributeValues[] = $attribute;
-        }
-
-        /** @var $accessory AttributeValue */
-        foreach ($removed as $attribute) {
-            $this->_removedAttributeValues[] = $attribute;
-        }
-
         foreach ($attributes as $attribute) {
-            $this->AddAttributeValue($attribute);
+            $this->ChangeAttribute($attribute);
         }
     }
 
