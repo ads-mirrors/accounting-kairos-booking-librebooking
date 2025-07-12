@@ -161,7 +161,7 @@
 							<li>Application admin designations will not be migrated, only the user accounts</li>
 							<li>Group admin designations will not be migrated, only the user accounts</li>
 							<li>Open reservation invitations will be removed</li>
-	<li>User timezones will all be set to the server's timezone</li>
+							<li>User timezones will all be set to the server's timezone</li>
 						<li>At the time of writing, Booked Scheduler 2 is not available in all of the same languages
 							that 1.2
 							was.

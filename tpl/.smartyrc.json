@@ -1,0 +1,10 @@
+{
+  "useTabs": true,
+  "endWithNewline": true,
+  "ignore": [
+    "**/*csv.tpl",
+    "**/*ical.tpl",
+    "**/*pdf.tpl",
+    "**/Export/**/*.tpl"
+  ]
+}

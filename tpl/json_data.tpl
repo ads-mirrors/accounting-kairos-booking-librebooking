@@ -1,6 +1,6 @@
 {if $data neq ''}
-{$data}
+	{$data}
 {/if}
 {if isset($error) && $error neq ''}
-{$error}
+	{$error}
 {/if}

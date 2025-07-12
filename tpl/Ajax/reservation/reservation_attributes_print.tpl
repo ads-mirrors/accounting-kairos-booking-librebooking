@@ -1,6 +1,6 @@
 {if $Attributes|default:array()|count > 0}
 	{foreach from=$Attributes item=attribute name=attributes}
-		 "{$attribute->Id()}" :
+		"{$attribute->Id()}" :
 		[ "{$attribute->Type()}" ,
 		"{$attribute->Label()|escape:'json'}" ,
 		{if $attribute->Type() eq '5'}
