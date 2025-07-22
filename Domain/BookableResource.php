@@ -1452,6 +1452,14 @@ class BookableResource implements IBookableResource
     }
 
     /**
+     * @return array|AttributeValue[]
+     */
+    public function GetAttributeValues(): array
+    {
+        return [...$this->_attributeValues];
+    }
+
+    /**
      * @param $customAttributeId
      * @return mixed
      */

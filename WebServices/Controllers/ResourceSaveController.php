@@ -56,7 +56,10 @@ class ResourceSaveController implements IResourceSaveController
         );
         $resourceId = $this->repository->Add($newResource);
 
-        $resource = $this->BuildResource($request, $resourceId);
+        $resource = $this->BuildResource(
+            request: $request,
+            resourceId: $resourceId
+        );
         $this->repository->Update($resource);
 
         return new ResourceControllerResult($resourceId, null);
@@ -69,7 +72,11 @@ class ResourceSaveController implements IResourceSaveController
             return new ResourceControllerResult(null, $errors);
         }
         $oldResource = $this->repository->LoadById($resourceId);
-        $resource = $this->BuildResource($request, $resourceId);
+        $resource = $this->BuildResource(
+            request: $request,
+            resourceId: $resourceId,
+            existingResource: $oldResource
+        );
         $resource->SetImages($oldResource->GetImages());
         $this->repository->Update($resource);
 
@@ -96,9 +103,10 @@ class ResourceSaveController implements IResourceSaveController
     /**
      * @param ResourceRequest $request
      * @param int $resourceId
+     * @param BookableResource|null $existingResource
      * @return BookableResource
      */
-    private function BuildResource($request, $resourceId)
+    private function BuildResource(ResourceRequest $request, int $resourceId, ?BookableResource $existingResource = null): BookableResource
     {
         $resource = new BookableResource(
             $resourceId,
@@ -123,6 +131,13 @@ class ResourceSaveController implements IResourceSaveController
             resourceTypeId: $request->typeId,
         );
         $resource->SetSortOrder($request->sortOrder);
+
+        // Copy existing attributes before calling ChangeAttributes, so that we know what attributes have changed
+        if ($existingResource !== null) {
+            foreach ($existingResource->GetAttributeValues() as $attributeValue) {
+                $resource->WithAttribute($attributeValue);
+            }
+        }
 
         $attributes = [];
         foreach ($request->GetCustomAttributes() as $attribute) {
