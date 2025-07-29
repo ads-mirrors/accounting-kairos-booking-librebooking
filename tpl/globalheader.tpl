@@ -79,12 +79,22 @@
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
         {/if}
     {/if}
+    {if isset($Select2) && $Select2}
+        <!-- Load Select2 CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
+        {*
+        <!-- Load Select2 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        {cssfile src="scripts/css/select2/select2-4.0.5.min.css"}
+        {cssfile src="scripts/css/select2/select2-bootstrap.min.css"}
+        *}
+
+    {/if}
     {if isset($InlineEdit) && $InlineEdit}
         {cssfile src="scripts/js/x-editable/css/bootstrap-editable.css" rel="stylesheet"}
         {cssfile src="scripts/js/wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet"}
-    {/if}
-    {if isset($Select2) && $Select2}
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     {/if}
     {if isset($Timepicker) && $Timepicker}
         {cssfile src="scripts/css/timePicker.css" rel="stylesheet"}

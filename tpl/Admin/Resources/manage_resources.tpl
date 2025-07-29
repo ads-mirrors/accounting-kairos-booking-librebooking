@@ -1,4 +1,4 @@
-{include file='globalheader.tpl' InlineEdit=true DataTable=true Trumbowyg=true}
+{include file='globalheader.tpl' Select2=true InlineEdit=true DataTable=true Trumbowyg=true}
 
 <div id="page-manage-resources" class="admin-page">
 	<div class="clearfix border-bottom mb-3">
@@ -390,10 +390,11 @@
 																	<span class="bi bi-pencil-square"></span>
 																</a>
 															</div>
+{*
 															<div>
 																<label
 																	class="inline fw-bold">{translate key='Contact'}</label>
-																<span class="propertyValue contactValue" data-type="text"
+																<span class="propertyValue contactValue" data-type="select2"
 																	data-pk="{$id}" data-value="{$resource->GetContact()}"
 																	data-name="{FormKeys::RESOURCE_CONTACT}">
 																	{if $resource->HasContact()}
@@ -408,6 +409,29 @@
 																		class="visually-hidden">{translate key=Contact}</span>
 																	<span class="bi bi-pencil-square"></span></a>
 															</div>
+*}
+<div id="contactSelectModal">
+    <label class="inline fw-bold">{translate key='Contact'}</label>
+    <span class="contactValue display-mode"
+          data-pk="{$id}"
+          data-value="{$resource->GetContact()}"
+          data-name="{FormKeys::RESOURCE_CONTACT}">
+        {if $resource->HasContact()}
+            {$resource->GetContact()}
+        {else}
+            {translate key='NoContactLabel'}
+        {/if}
+    </span>
+    <div id="contactSelectContainer" class="card card-body d-none">
+        <select id="contactSelect" class="contactValue edit-mode"
+                style="display: none; width: 200px;">
+        </select>
+    </div>
+    <a class="update changeContact link-primary" title="{translate key='Edit'}" href="#">
+        <span class="visually-hidden">{translate key=Contact}</span>
+        <span class="bi bi-pencil-square"></span>
+    </a>
+</div>
 															<div>
 																<label
 																	class="inline fw-bold">{translate key='Description'}</label>
@@ -2057,7 +2081,7 @@
 
 {csrf_token}
 
-{include file="javascript-includes.tpl" InlineEdit=true Clear=true DataTable=true Trumbowyg=true }
+{include file="javascript-includes.tpl" Select2=true InlineEdit=true Clear=true DataTable=true Trumbowyg=true }
 {datatable tableId=$tableId}
 {jsfile src="ajax-helpers.js"}
 {jsfile src="autocomplete.js"}
@@ -2221,9 +2245,131 @@
 		url: updateUrl + '{ManageResourcesActions::ActionChangeLocation}', emptytext: "{translate key='NoLocationLabel'|escape:'javascript'}"
 	});
 
+{*
 	$('.contactValue').editable({
 		url: updateUrl + '{ManageResourcesActions::ActionChangeContact}', emptytext: "{translate key='NoContactLabel'|escape:'javascript'}"
 	});
+*}
+
+	$('#contactSelect').select2({
+        placeholder: "{translate key='SelectContact'}",
+        dropdownParent: $("#contactSelectContainer"),
+        // allowClear: true,
+        tags: true,
+        data: [
+            { id: '', text: '{translate key="NoContactLabel"}' },
+            // Add your contact options here
+            // These would typically come from your backend/PHP
+            { id: 'contact1', text: 'Admin Admin <admin@example.com>' },
+            { id: 'contact2', text: 'User User <user@example.com>' }
+            // ... more contacts
+        ],
+        theme: 'bootstrap-5'  // Bootstrap 5 styling
+    });
+
+
+    // Handle edit button click
+    $('.changeContact').on('click', function(e) {
+        // Remove the 'd-none' class to make the container visible
+        $('#contactSelectContainer').removeClass('d-none');
+        //  console.log("preventDefault");
+        //  e.preventDefault();
+
+        //  // Hide display, show select
+        //  console.log(".display-mode hide");
+        //  $('.display-mode').hide();
+        //  console.log(".edit-mode show");
+        //  $('.edit-mode').show();
+
+        // Set current value and open dropdown
+        var currentValue = "{$resource->GetContact()}";
+        var currentValue = $(".contactValue").data("value");
+        console.log("Current value", currentValue);
+        $('#contactSelect').val(currentValue).trigger('change');
+        // $('#contactSelect').select2('open');
+    });
+
+    // Handle selection
+    $('#contactSelect').on('select2:select select2:clear', function (e) {
+        var selectedValue = $(this).val();
+        var selectedText = selectedValue ? $(this).find('option:selected').text() : '{translate key="NoContactLabel"}';
+
+        // Update via AJAX (same as above)
+        // ... AJAX code ...
+
+        // On success, update display and hide select
+        // $('.display-mode').text(selectedText).show();
+        // $('.edit-mode').hide();
+        $('#contactSelectContainer').addClass('d-none');
+    });
+
+    // Handle clicking away (cancel edit)
+    $('#contactSelect').on('select2:close', function (e) {
+        setTimeout(function() {
+            $('.display-mode').show();
+            $('.edit-mode').hide();
+        }, 100);
+        $('#contactSelectContainer').addClass('d-none');
+    });
+
+
+
+{*
+    // Set the current value
+    var currentContact = "{$resource->GetContact()}";
+    if (currentContact) {
+        $('#contactSelect').val(currentContact).trigger('change');
+    }
+
+    // Handle selection changes
+    $('#contactSelect').on('select2:select select2:clear', function (e) {
+        var selectedValue = $(this).val();
+        var pk = $(this).data('pk');
+        var fieldName = $(this).data('name');
+
+        // Make AJAX call to update the contact
+        $.ajax({
+            url: 'your-update-endpoint.php', // Replace with your actual endpoint
+            method: 'POST',
+            data: {
+                pk: pk,
+                name: fieldName,
+                value: selectedValue
+            },
+            success: function(response) {
+                // Update the display span
+                var displayText = selectedValue ?
+                    $('#contactSelect option:selected').text() :
+                    '{translate key="NoContactLabel"}';
+                $('.current-contact-display').text(displayText);
+
+                // Optional: Show success message
+                console.log('Contact updated successfully');
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error('Error updating contact:', error);
+                // Optionally revert the selection
+            }
+        });
+    });
+});
+
+	$('.contactValue').select2({
+		url: updateUrl + '{ManageResourcesActions::ActionChangeContact}', emptytext: "{translate key='NoContactLabel'|escape:'javascript'}",
+        select2: {
+            // tags: true,  // Allows free-form text entry
+            // tokenSeparators: [',', ' '],
+            data: [
+                { id: 'suggestion1', text: 'Suggestion 1' },
+                { id: 'suggestion2', text: 'Suggestion 2' },
+                { id: 'suggestion3', text: 'Suggestion 3' }
+            ],
+            width: '300px'
+            theme: 'bootstrap-5'  // Bootstrap 5 styling
+        }
+    });
+*}
 
 	$('.descriptionValue').editable({
 		url: updateUrl + '{ManageResourcesActions::ActionChangeDescription}',
