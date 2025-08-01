@@ -29,3 +29,6 @@ parameters:
             - vendor/
     bootstrapFiles:
         - vendor/autoload.php
+
+rules:
+  - LibreBookingDev\PHPStan\NoDieRule
